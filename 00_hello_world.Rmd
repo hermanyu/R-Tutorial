@@ -1,0 +1,408 @@
+---
+title: "01 Hello World!"
+output: html_document
+date: "2022-07-11"
+editor_options: 
+  chunk_output_type: inline
+---
+
+# Hello, World!
+
+## 1. Installing and Loading Packages
+
+We begin by installing the `tidyverse` package.
+
+```{r eval=FALSE}
+install.packages("tidyverse")
+```
+
+Once a package has been installed, we can load it into the current runtime instance using the `library()` function.
+
+```{r}
+library(tidyverse)
+```
+
+\
+
+## 2. The Basics
+
+Let us begin with some basic programming in R. We will give a quick rundown of how to do the following topics:
+
+1.  Data types
+2.  Operations
+3.  Variable assignment
+4.  Control flow
+5.  Loops
+
+\
+
+### 2.1 Data Types
+
+There are 6 primitive data types in R:
+
+-   **double** : real numbers.
+-   **integer** : integer values.
+-   **complex** : complex numbers.
+-   **character** : string literals.
+-   **logical** : the usual TRUE/FALSE boolean values.
+-   **raw** : values specified as raw bytes.
+
+#### Numerics
+
+We can check the data type of a given element by using the `typeof()` function:
+
+```{r}
+# example of a double data type
+3.14
+typeof(3.14)
+```
+
+**Note:** R by default stores *all* numbers as `double`, regardless of whether there is a floating decimal point or not. For example, consider the following outputs:
+
+```{r}
+3
+typeof(3)
+typeof(3.0)
+```
+
+Notice how both the values `3` and `3.0` are stored as type `double`, even though `3` has no decimal point.
+
+#### Integers
+
+This leads us to the `integer` type. Like the name implies an `integer` is just a whole number. In order to specify an `integer` to R, we must append an `L` as a suffix to the value:
+
+```{r}
+# declare an integer by appending "L" as a suffix
+3L
+class(3L)
+typeof(3L)
+```
+
+#### Complex
+
+As a gift to all the mathematicians, `complex` numbers can be stored as a primitive data type in R. To declare a `complex` value, we use the standard mathematical syntax `a + bi`
+
+```{r}
+# delcare a complex number
+2+5i
+class(2+5i)
+```
+
+#### Characters
+
+String literals are also a primitive data type in R, aptly named the `character` type. As a personal convention, we try to use to use single quotes `'a'` for a character and double quotes `"abc"` for a longer string. This is just a personal convention for readability, not an actual rule in the R language.
+
+```{r}
+'a'
+class('a')
+
+"abc"
+class("abc")
+```
+
+#### Logicals
+
+The `logical` type is what the R language calls a boolean, i.e. `TRUE` and `FALSE` values:
+
+```{r}
+TRUE
+typeof(TRUE)
+
+FALSE
+typeof(FALSE)
+```
+
+**Note:** notice that the two boolean values in R must be typed in all caps.
+
+#### Raws
+
+The `raw` data type is for values stored as raw bytes. Fundamentally, a computer is a bunch of on/off switches that are flickering millions of times to perform a computation. If we label an "on" switch with a 1 and an "off" switch with a 0, then we can theoretically save any value as a sequence of 1's and 0's. For example, if we had 8 switchs (which equals 1 **byte**), we could store the integer 2 in computer memory as `00000010`.
+
+```{r}
+intToBits(2L)
+typeof(intToBits(2L))
+```
+
+```{r}
+charToRaw("a")
+typeof(charToRaw("a"))
+```
+
+\
+
+### 2.2 Operations
+
+Data types by themselves are cool, but we need to operate on them to make them useful. Different data types can be operated on in different ways. An **operator** takes one or more values and returns a new value (possibly of a different type than the inputs).
+
+##### Arithmetic Operations
+
+The `double`, `integer`, and `complex` types represent numbers and so we can do arithmetic on them. Specifically, we can:
+
+1.  Add `+`
+2.  Subtract `-`
+3.  Multiply `*`
+4.  Divide `/`
+5.  Exponentiation `^`
+
+```{r}
+# add two doubles
+2.3 + 4.5
+
+# multiply 2 integers
+3L*7L
+
+# divide 2 complexes
+(13+0i)/(2-3i)
+```
+
+We can also exponentiate using `^`, although complex numbers can only be taken to real power. (That being said: it is mathematically possible to raise numbers to a complex power, it just requires a bit of trigonometry!).
+
+```{r}
+# double
+4.5^3.1
+
+# integer
+2^7.1
+
+# complex
+(1+2i)^(3.2)
+```
+
+#### Modular Division and Integer Division
+
+Integers come equipped with two very useful operations: the modulo operation `%%` and integer division `%/%`
+
+```{r}
+# regular division
+13L/7L
+
+# modular division; returns the remainder
+13L %% 7L
+
+# integer division; returns the nearest integer rounded down
+13L %/% 7L
+```
+
+**Note:** Given two integers $a$ and $b$, it is always the case that: $$a = (a \%/\% b)*b + (a \%\% b)$$ This is little fact is the backbone of Euclid's division algorithm.
+
+#### Relational Operators
+
+Relational operators allow us to *compare* numerical values. They are:
+
+1.  Less than `<`
+2.  Greater than `>`
+3.  Less than or equal to `<=`
+4.  Greater than or equal to `>=`
+5.  Equals to `==`
+6.  Not equals to `!=`
+
+These operators compare two numerical values and return a `logical` value: `TRUE` if the relationship is true and `FALSE` if the relationship is false.
+
+```{r}
+# make the comparison 2 < 3; returns TRUE since 2 is less than 3
+2 < 3
+
+# make the comparison 10 < 3; returns FALSE since 10 is not less than 3
+10 < 3
+
+# make the comparison 3 <= 3; returns TRUE since 3 is less than or equal to 3
+3 <= 3
+
+# make the comparison 3.01==3; returns FALSE since 3.01 is not equal to 3
+3.01 == 3
+
+# make the comparison 3.01 != 3; returns TRUE since 3.01 is not equal to 3
+3.01 != 3
+```
+
+#### Logical Operators
+
+Logical operators (like the name implies) operate on the two `logical` types `TRUE` and `FALSE`. They are:
+
+1.  The NOT operator `!`
+2.  The AND operator `&`
+3.  The OR operator `|`
+
+```{r}
+# (TRUE) AND (FALSE) returns FALSE
+TRUE & FALSE
+
+# (TRUE) OR (FALSE) returns TRUE
+TRUE | FALSE
+
+# NOT (TRUE) returns FALSE
+!TRUE
+
+# Some boolean algebra :)
+## Observe that the following comparions will return TRUE
+## indicating that the two sides are equal. This is saying that
+## the NOT operator actually distributes across both the AND and OR operators
+## like how a negative sign distributes across addition.
+!( TRUE & FALSE ) == (!TRUE | !FALSE)
+!( TRUE | FALSE ) == (!TRUE & !FALSE)
+```
+
+\
+
+### 2.3 Variable Assignment
+
+When programming and computing, we will need to be able to store values for later use. In order to do this, we assign values to variables using the syntax `<-` like so:
+
+```{r}
+# assign the value 2L to the variable x
+x <- 7
+
+# assign the value 5L to the variable y
+y <- 26
+```
+
+Once the a value has been stored in a variable, we can then manipulate and operate on that value by referencing the variable.
+
+```{r}
+# we have x = 7 and y = 26;
+
+# multiply x*y = 7*26
+x*y
+
+# modular division y %% x = 26 %% 7
+y %% x
+
+# comparison x < y which is equivalent to 7 < 26
+x < y
+
+```
+
+**Note:** it is important to keep in mind that the variable `x` is only a reference to the value `7` in the example above. To clarify what this means, consider the following example:
+
+```{r}
+# assign x = 7
+x <- 7
+
+# assign z = x. Since x = 7, we have z = 7
+z <- x
+
+# now assign x = 3
+x <- 3
+
+# notice that the variable z does not change to 3
+cat("This is the value of z:", z)
+```
+
+Basically, what's happening here is that: when the assignment `x <- 7` is made, the variable `x` is a shortcut to the numerical object `7`. When we assigned `z <- x`, we invoked the shortcut and assigned `z <- 7`. When changing the value of `x`, it does not affect the value of `z` since `z` is attached to the object `7` and not the shortcut `x`.
+
+\
+
+### 2.4 Control Flow
+
+**Control flow** means the act of controlling how a program behaves (or "flows") based on the occurrence of different situations. This is usually achieved using `if` - `else if` - `else` statements. Unlike Python, the code block is not organized by indents. Rather, the code block is organized by curly braces `{}` like in Java.
+
+```{r}
+x <- 128
+
+# print the statement "x is even", if x is divisible by 2
+if (x %% 2 == 0){
+  print("x is even.")
+}
+
+# Note that simple conditionals can be written in-line
+if (x %% 2 == 0) print("x is even... again!")
+```
+
+We can diversify the control flow by adding in `else-if` and `else` statements to get more complex behavior:
+
+```{r}
+# the standard FizzBuzz problem
+
+x <-  122465
+
+if (x %% 3 == 0 & x %% 5 == 0){
+  print("FizzBuzz!")
+} else if (x %% 3 == 0){
+  print("Fizz!")
+} else if (x %% 5 == 0){
+  print("Buzz!")
+} else {
+  print("nope!")
+}
+```
+
+\
+
+### 2.5 Loops
+
+The final element to discuss is loops. Loops allow us to repeat an action many times. Combining loops with control flow will allow us to automate computer tasks and is what happens when a program is "running".
+
+Loops come in two flavors:
+
+1.  `for` loops.
+2.  `while` loops.
+
+#### "for" loops
+
+A `for` loop will conduct a loop some predetermined number times, using an iterable (i.e. a "counting system") to keep track of the number cycles. Again, code blocks for loops use curly braces like Java.
+
+```{r}
+# a loop which uses the numbers 1 through 10 to count the cycles
+for (i in 1:10){
+  print(sprintf("Hello... for the %s time!", i))
+}
+```
+
+**Note:** Although we haven't talked about them yet, `for` loops can use any `iterable` object as an index (i.e. as a counter). Iterables are data structures in R which organize data into a sequential system. Examples include vectors and lists.
+
+```{r}
+# define a vector with coordinates 1, 2, 2, 8, and 4
+v <- c(1,2,2,8,4)
+
+for (i in v){
+  print(i)
+}
+```
+
+```{r}
+# define a list of fruits
+fruits <- list("apple", "banana", "kiwi", "orange")
+
+for (fruit in fruits){
+  print(fruit)
+}
+```
+
+
+#### "while" loops
+
+Sometimes, it is not always possible to know exactly how many times we need to run a loop before we can stop. For example, consider the following list of numbers:
+
+```{r}
+nums <- list(1233, 2384, 12965, 774, 8823, 3008, 3859, 12309, 304, 6, 3996, 20967,3290, 485, 869890, 4890,1209, 12394, 503095,70609, 309218, 456, 7,4811)
+```
+
+Somewhere in this list of numbers is a value `x` which is divisible by `37`. Suppose we were given the following task:
+
+    Write a program which finds a number divisible by 37 as "fast" as possible.
+
+Now obviously, it's unclear how many times we would need to loop in order to find the number. We could try a `for` loop that goes through the entire list, but that would not be "as fast as possible". Indeed, if the number we want was at the front of the list, our `for` loop would spend a bunch of time doing needless computations as it ran through the rest of the list.
+
+Instead what we can do is use a `while` loop. A `while` loop will keep on running as long as some condition is `TRUE`:
+
+```{r}
+# a 'while' loop to search the list for a mutiple of 37 "as fast as possible"
+still_looking <- TRUE
+i <- 1
+
+while (still_looking){
+  # if list element is mult. of 37, set still_looking to FALSE terminating the loop
+  if (nums[[i]]%%37 == 0){
+    still_looking <- FALSE
+    cat("Found multiple of 37 at position",i, "with value", nums[[i]])
+  } else {
+    i <- i+1
+  }
+  
+  # if we run through all 24 elements in the list, terminate loop
+  if (i >= 24){
+    still_looking <- FALSE
+    print("Not found")
+  }
+}
+```
