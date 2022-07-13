@@ -1,11 +1,3 @@
----
-title: "01 Hello World!"
-output: html_document
-date: "2022-07-11"
-editor_options: 
-  chunk_output_type: inline
----
-
 # Hello, World!
 
 ## 1. Installing and Loading Packages
@@ -47,6 +39,8 @@ There are 6 primitive data types in R:
 -   **logical** : the usual TRUE/FALSE boolean values.
 -   **raw** : values specified as raw bytes.
 
+\
+
 #### Numerics
 
 We can check the data type of a given element by using the `typeof()` function:
@@ -67,6 +61,8 @@ typeof(3.0)
 
 Notice how both the values `3` and `3.0` are stored as type `double`, even though `3` has no decimal point.
 
+\
+
 #### Integers
 
 This leads us to the `integer` type. Like the name implies an `integer` is just a whole number. In order to specify an `integer` to R, we must append an `L` as a suffix to the value:
@@ -78,6 +74,8 @@ class(3L)
 typeof(3L)
 ```
 
+\
+
 #### Complex
 
 As a gift to all the mathematicians, `complex` numbers can be stored as a primitive data type in R. To declare a `complex` value, we use the standard mathematical syntax `a + bi`
@@ -87,6 +85,8 @@ As a gift to all the mathematicians, `complex` numbers can be stored as a primit
 2+5i
 class(2+5i)
 ```
+
+\
 
 #### Characters
 
@@ -99,6 +99,8 @@ class('a')
 "abc"
 class("abc")
 ```
+
+\
 
 #### Logicals
 
@@ -113,6 +115,8 @@ typeof(FALSE)
 ```
 
 **Note:** notice that the two boolean values in R must be typed in all caps.
+
+\
 
 #### Raws
 
@@ -133,6 +137,8 @@ typeof(charToRaw("a"))
 ### 2.2 Operations
 
 Data types by themselves are cool, but we need to operate on them to make them useful. Different data types can be operated on in different ways. An **operator** takes one or more values and returns a new value (possibly of a different type than the inputs).
+
+\
 
 ##### Arithmetic Operations
 
@@ -167,6 +173,22 @@ We can also exponentiate using `^`, although complex numbers can only be taken t
 # complex
 (1+2i)^(3.2)
 ```
+\
+
+We can also take *absolute values* of numbers as well. This is done via the `norm()` function in R:
+
+```{r}
+# norm aka absolute value of the number -3 
+norm(-3, type="2")
+
+# norm of the number 3
+norm(3, type="2")
+
+# norm of the complex number 3+4i
+norm(3+4i, type="2")
+```
+
+\
 
 #### Modular Division and Integer Division
 
@@ -184,6 +206,8 @@ Integers come equipped with two very useful operations: the modulo operation `%%
 ```
 
 **Note:** Given two integers $a$ and $b$, it is always the case that: $$a = (a \%/\% b)*b + (a \%\% b)$$ This is little fact is the backbone of Euclid's division algorithm.
+
+\
 
 #### Relational Operators
 
@@ -214,6 +238,8 @@ These operators compare two numerical values and return a `logical` value: `TRUE
 # make the comparison 3.01 != 3; returns TRUE since 3.01 is not equal to 3
 3.01 != 3
 ```
+
+\
 
 #### Logical Operators
 
@@ -337,6 +363,8 @@ Loops come in two flavors:
 1.  `for` loops.
 2.  `while` loops.
 
+\
+
 #### "for" loops
 
 A `for` loop will conduct a loop some predetermined number times, using an iterable (i.e. a "counting system") to keep track of the number cycles. Again, code blocks for loops use curly braces like Java.
@@ -368,6 +396,7 @@ for (fruit in fruits){
 }
 ```
 
+\
 
 #### "while" loops
 
@@ -406,3 +435,7 @@ while (still_looking){
   }
 }
 ```
+
+\
+
+------------------------------------------------------------------------

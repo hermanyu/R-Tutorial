@@ -1,0 +1,259 @@
+# What's Your Vector, Victor?
+
+## 3. Basic Data Structures
+
+In order to perform more complicated processes, we must organize our data into more sophisticated constructs. This section will cover some of the basic data structures that come equipped in base R. Specifically, we will talk about the following class of objects:
+
+1.  Vectors
+2.  Lists
+3.  Matrices
+4.  Arrays
+5.  Data Frames
+
+\
+
+### 3.1 Vectors
+
+\
+
+#### 3.1.1 Building Vectors
+
+A **vector** is just a sequence of values, all of the same data type. To build a vector, we use the syntax `c()` and input the vector components.
+
+```{r}
+# define a vector [1,2,3] and call it v
+v <- c(1,2,3)
+
+# print the vector v
+print(v)
+```
+
+\
+
+As mentioned in the section on loops, vectors are `iterable` and so we can use their components to index `for` loops.
+
+```{r}
+for (component in v){
+  cat("component... ", component, "\n")
+}
+```
+
+\
+
+Unlike in math, vectors are not restricted to numeric values. We can have a vector of `characters` and a vector of `logicals` as well:
+
+```{r}
+# define a vector of characters
+s <- c("a", "b", "cee", "d")
+
+# define a vector of logicals (booleans)
+bool <- c(TRUE, TRUE, FALSE, TRUE, FALSE)
+
+print(s)
+print(bool)
+```
+
+\
+
+Since the components of a vector are all the same typing, every vector inherits a typing from its components:
+
+```{r}
+# a vector of type "double"
+v <- c(1,2,3)
+
+# a vector of type "character"
+s <- c("a", "b", "cee")
+
+# a vector of type "logical"
+bool <- c(TRUE, FALSE, FALSE)
+
+typeof(v)
+typeof(s)
+typeof(bool)
+```
+
+\
+
+We can also construct vectors with sequential values using the `:` operation
+
+```{r}
+# generate a vector whose values are 1, 2, 3, 4, ..., 100
+nums <- 1:100
+
+print(nums)
+```
+
+\
+
+We can also customize the sequencing a bit more using the `seq()` function
+
+```{r}
+# generate a vector whose values are 10, 20, 30, 40, ..., 500
+tens <- seq(from = 0, to = 500, by=10)
+
+print(tens)
+```
+
+\
+
+#### 3.1.2 Accessing Vector Components
+
+The purpose of any data structure is to organize data in a useful way. The end goal of every data structure is to provide a utilitarian way to store and retrieve data. Vectors are no exception; Utilizing vectors to their fullest requires understanding how to store and retrieve data from them.
+
+The **components** of a vector are the individual values stored in the vector. To store values in a vector, we simply construct a new vector like we did before:
+
+```{r}
+# store the values 2, 4, and 6 in a vector
+v <- c(2,4,6,8,10)
+
+print(v)
+```
+
+\
+
+**Accessing** the components of a vector means to retrieve the value from the vector. Recall that data structures are built to organize data in a useful way. Vectors are specifically built to organize data as sequence of values. Therefore, each value in a vector can be identified by its **index**, i.e. its place in line.
+
+```{r}
+# Access the 3rd element of the vector v = (2,4,6,8,10)
+v[3]
+```
+
+\
+
+We can store new values at specific indices too. This overwriting the previous value.
+
+```{r}
+# store the value -2 in the 1st position 
+v[1] <- -2
+
+print(v)
+```
+
+\
+
+Sometimes, we will want to store a new value without overwriting any of the previous values. This can be done by adjoining the new value at the tail-end.
+
+```{r}
+append(v, 12)
+```
+
+This is probably a good time to point out a major difference between Python and R. In Python, `append()` is called as a method to a list, hence it changes the original list on which it is called.
+
+In R, `append()` is a function which takes `v` and `12` as inputs and returns a *new* vector object $[-2, 4, 6, 8, 10, 12]$. Therefore, the original vector `v` does not get changed. Consequently, if we wanted to use the new vector $[-2,4,6,8,10]$, we will need to tie it down with a variable:
+
+```{r}
+# append 12 to v and store it in a new variable
+new_v <- append(v,12)
+
+# notice that the original vector v is unchanged
+print(v)
+print(new_v)
+```
+
+\
+
+We can also access multiple values by passing a "vector of indices":
+
+```{r}
+# access the 1st, 2nd and 5th values in the vector v
+v[c(1,2,5)]
+
+
+
+# to be more explicit, we can specify the desired index values
+# by building an "access" vector
+access_vector = c(1,2,5)
+
+# then use access_vector to access the components of v by indices
+v[access_vector]
+```
+
+\
+
+#### 3.1.3 Vector Operations
+\
+
+##### Arithmetic Operations
+
+We can do arithmetic on *numeric* vectors (like how we would do arithmetic with numbers)
+
+```{r}
+# define 2 vectors
+v <- c(2,2,2)
+u <- c(6,4,2)
+
+# vector addition
+v + u
+
+# vector subtraction
+v - u
+
+# elementwise multiplication (aka the Hadamard product)
+v*u
+
+# elementwise division
+u/v
+```
+
+\
+
+We can also take the "absolute value" aka the magnitude (aka the norm) of vectors as well. Mathematically, the **(Euclidean) norm** of a vector $v = (v_1,\ldots,v_n)$ is given by the formula: $$|(v_1,\ldots,v_n)| = \sqrt{\sum_{i=1}^n v_i^2} = \sqrt{v_1^2+\ldots+v_n^2}$$
+
+```{r}
+
+norm(v, type="2")
+norm(u, type="2")
+```
+
+**Fun Math Fact:** when making examples of norms for 3D vectors, the author (i.e. me!) found it very hard to find nice, whole integer values for the vector and its norm. In fact, the only 3D vectors whose components *and* norms are whole integer values are `c(0,0,0)` and `c(1,1,1)`. No other vector can have integer components and an integer norm. This result is known as **Fermat's Last Theorem** and was conjectured by Pierre Fermat in the 1600s. Mathematicians failed to prove it for over 300 years until Andrew Wiles finally came up with an answer in 1991.
+
+\
+
+**Fun Math + Programming Fact:** it turns out that the `norm()` function actually computes norms for `matrix` objects. The parameter value `type="2"` specificies the "2-norm" or the **spectral norm**. As implied by the name, the spectral norm returns the largest value of the "spectrum" aka the largest **singular value** of the "matrix" $v$. Note that singular values of any matrix $A$ are just the square-roots of the eigenvalues of $AA^T$. For our row vector $v$ (being treated as a $1\times 3$ matrix), the largest singular value of $v$ is thus the square-root of the largest eigenvalue of $vv^T = |v|^2$. Now $|v|^2$ is a scalar, so its eigenvalue is just itself $|v|^2$, hence the singular value of $v$ is precisely just $\sqrt{|v|^2} = |v|$. **This is why using the `norm()` function actually results in the Euclidean norm for row vectors in the R language**. That being said, R is computing this norm by doing an **SVD** (singular value decomposition) every time, so the run time can become quite problematic when the vector dimensions are large. A more runtime efficient way to compute norms is to hard code the formula into a function. However, the catch is that hard coding the formula can lead to under/overflow issues in the sum of squares.
+
+\
+
+##### Sorting
+
+Vectors store data and we can manipulate how that data is stored (to a certain extent). One such manipulation is the `sort()` operation, which sorts the values of the vector
+
+```{r}
+# define a vector
+v <- c(5, 17, -4, 16, 8)
+
+# sort vector in ascending/increasing order
+sort(v)
+
+# sort vector in descending/decreasing order
+sort(v, decreasing=TRUE)
+```
+\
+
+**Programming Note:** one of the first problems encountered in a Data Structures and Algorithms class is the Sorting Problem. The problem is to write an algorithm which sorts a list of numbers from smallest to largest. The challenge to the problem lies in writing an algorithm that performs the sorting as fast as possible. Many different algorithms have been devised: insertion sort, merge sort, bubble sort, quick sort, etc. The `sort()` function in R comes with a `method` parameter where we can choose to use a specific sorting algorithm to carry out the sorting process. The possible values we can choose are: `auto` (R picks for us), `shell` (shell sort), `quick` (quick sort) and `radix` (radix sort).
+
+```{r}
+# sort the vector v using shell sort
+sort(v, method="shell")
+```
+
+\
+
+##### Logical Operations
+
+Recall that our `logical` values `TRUE` and `FALSE` had the `&` (AND), `|` (OR) and `!` (NOT) operations. Since vectors can be of `logical` type, these operations extend seamlessly to `logical` vectors as well:
+
+```{r}
+# construct 2 vectors of logical type
+bool1 <- c(TRUE, FALSE, FALSE)
+bool2 <- c(TRUE, TRUE, FALSE)
+
+# AND operator; performs the '&' operation element-wise
+bool1 & bool2
+
+# OR operator; performs the '|' operation element-wise
+bool1 | bool2
+
+# NOT operator; performs the '!' operation element-wise
+!bool1
+```
+
