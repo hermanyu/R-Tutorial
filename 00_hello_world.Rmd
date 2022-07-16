@@ -22,7 +22,7 @@ Let us begin with some basic programming in R. We will give a quick rundown of h
 
 1.  Data types
 2.  Operations
-3.  Variable assignment
+3.  Variable and function assignment
 4.  Control flow
 5.  Loops
 
@@ -270,7 +270,7 @@ TRUE | FALSE
 
 \
 
-### 2.3 Variable Assignment
+### 2.3 Variable and Function Assignment
 
 When programming and computing, we will need to be able to store values for later use. In order to do this, we assign values to variables using the syntax `<-` like so:
 
@@ -316,6 +316,29 @@ cat("This is the value of z:", z)
 
 Basically, what's happening here is that: when the assignment `x <- 7` is made, the variable `x` is a shortcut to the numerical object `7`. When we assigned `z <- x`, we invoked the shortcut and assigned `z <- 7`. When changing the value of `x`, it does not affect the value of `z` since `z` is attached to the object `7` and not the shortcut `x`.
 
+\
+
+We can also assign functions to manipulate data directly. This is done using the following syntax:
+
+```{r}
+# define a function called f which takes 2 inputs and does something
+f <- function(input_1, input_2){
+  
+  # the block of text inside the braces is what the function actually does
+  my_sum <- input_1+input_2
+  
+  # we can also return some output value, if we so desire
+  return(my_sum)
+}
+```
+
+We can then call our function using standard function notation:
+
+```{r}
+f(1,2)
+f(3,7)
+f(2+1i,3-9i)
+```
 \
 
 ### 2.4 Control Flow

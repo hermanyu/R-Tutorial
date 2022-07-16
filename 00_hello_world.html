@@ -392,7 +392,7 @@ rundown of how to do the following topics:</p>
 <ol style="list-style-type: decimal">
 <li>Data types</li>
 <li>Operations</li>
-<li>Variable assignment</li>
+<li>Variable and function assignment</li>
 <li>Control flow</li>
 <li>Loops</li>
 </ol>
@@ -663,8 +663,8 @@ TRUE | FALSE</code></pre>
 </p>
 </div>
 </div>
-<div id="variable-assignment" class="section level3">
-<h3>2.3 Variable Assignment</h3>
+<div id="variable-and-function-assignment" class="section level3">
+<h3>2.3 Variable and Function Assignment</h3>
 <p>When programming and computing, we will need to be able to store
 values for later use. In order to do this, we assign values to variables
 using the syntax <code>&lt;-</code> like so:</p>
@@ -710,6 +710,26 @@ shortcut to the numerical object <code>7</code>. When we assigned
 does not affect the value of <code>z</code> since <code>z</code> is
 attached to the object <code>7</code> and not the shortcut
 <code>x</code>.</p>
+<p><br />
+</p>
+<p>We can also assign functions to manipulate data directly. This is
+done using the following syntax:</p>
+<pre class="r"><code># define a function called f which takes 2 inputs and does something
+f &lt;- function(input_1, input_2){
+  
+  # the block of text inside the braces is what the function actually does
+  my_sum &lt;- input_1+input_2
+  
+  # we can also return some output value, if we so desire
+  return(my_sum)
+}</code></pre>
+<p>We can then call our function using standard function notation:</p>
+<pre class="r"><code>f(1,2)</code></pre>
+<pre><code>## [1] 3</code></pre>
+<pre class="r"><code>f(3,7)</code></pre>
+<pre><code>## [1] 10</code></pre>
+<pre class="r"><code>f(2+1i,3-9i)</code></pre>
+<pre><code>## [1] 5-8i</code></pre>
 <p><br />
 </p>
 </div>
