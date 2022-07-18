@@ -1,0 +1,753 @@
+# They're called "tensors" because you get tenser when learning them
+
+## 3 Basic Data Structures (cont.)
+
+### 3.3 Matrices
+
+A **matrix** is just a sequence of vectors. Better yet, a matrix is just a *vector of vectors*. 
+
+\
+
+#### 3.3.1 Constructing Matrices
+
+Unfortunately, if we try to define it as such in R, we just end up concatenating the vectors:
+
+```{r}
+# define three vectors
+v <- c(1,2)
+u <- c(3,4)
+w <- c(5,6)
+
+# create a "vector of vectors"
+my_matrix <- c(v, u, w)
+
+# result is a single, concatenated vector
+my_matrix
+```
+\
+
+To build an actual matrix, the proper syntax is to use the `matrix()` function. The arguments we need to pass are:
+
+1. a vector of values `c(a_11, a_12, ..., a_mn)`.
+2. the number of rows desired `m`.
+3. the number of columns desired `n`
+
+```{r}
+my_matrix <- matrix(c(1,2,3,4,5,6), nrow = 3, ncol = 2)
+
+my_matrix
+```
+\
+
+**Note:** `matrix()` is functionally equivalent to the `reshape()` method in NumPy for a 1d-array to a nd-array.
+
+Notice what R is doing: it is recognizing that the *columns* of the matrix should be size 3, so R takes the long vector `c(1,2,3,4,5,6)` into 2 sub-vectors `c(1,2,3)` and `c(4,5,6)` of length 3. It then uses these two vectors as the columns of the resulting matrix.
+
+If we wanted R to make the splits by the *row* size of 2 instead, we specify this in the `byrow=TRUE` parameter:
+
+```{r}
+my_matrix <- matrix(c(1,2,3,4,5,6), nrow = 3, ncol = 2, byrow=TRUE)
+
+my_matrix
+```
+\
+
+Notice in this case, R recognizes that the *rows* of the matrix should be size 2, so R takes `c(1,2,3,4,5,6)` and splits it into vectors of size 2: `c(1,2)`, `c(3,4)`, `c(5,6)` and uses these as the rows of the resulting matrix.
+
+\
+
+#### 3.3.2 Special Matrices
+
+**Linear algebra** is the algebra of matrices and vectors. On arbitrary matrices and vectors, linear algebra can get rather obnoxious but there are certain "special" matrices for which linear algebra is very pleasant and, ultimately, easy. In this section, we will list out some of the most important special matrices and shortcuts for building. We wait until section 3.3.5 Matrix Operations to explain why these matrices are actually special.
+
+The first kind of special matrices are the **zero matrices**, which are just matrices of all 0 entries. Zero matrices can be constructed in R very quickly by passing the value `0` as the input vector:
+
+```{r}
+# construct a 7 x 10 zero matrix
+zero <- matrix(0, nrow=7, ncol=10)
+
+zero
+```
+\
+
+The second kind of special matrices are the **all-ones matrices**. Like the name suggests, these matrices have all 1's in their entries. 
+
+```{r}
+# create a 5 x 6 matrix of all-ones
+ones <- matrix(1, nrow=5, ncol=6)
+
+ones
+```
+
+\
+The third kind of special matrix are the **diagonal matrices**. A diagonal matrix is a square matrix with 0's on the off-diagonal entries. Diagonal matrices can be constructed in R using the `diag()` function
+
+```{r}
+# create a 5x5 diagonal matrix
+D <- diag(c(-1,2,-3,4,-5))
+
+D
+```
+\
+
+Of the diagonal matrices, there is a subset of matrices that are extra special. These are the **identity matrices** which are diagonal matrices whose diagonal entries are all 1. Identity matrices can be constructed quickly using the following syntax:
+
+```{r}
+# create the 5x5 identity matrix
+I <- diag(5)
+
+I
+```
+\
+
+Notice that passing only scalar integer into `diag()` creates an identity matrix of the specified dimension (e.g. 5x5 in our case). 
+
+\
+
+#### 3.3.3  Accessing Matrix Entries
+
+To access entries of a matrix, we use the syntax `A[i,j]`, where `A` is the matrix, where `i` specifies the row number and `j` specifies the column number.
+
+```{r}
+# create a 3 x 2 matrix of numerics
+my_matrix <- matrix(1:6, nrow = 3, ncol =2)
+
+my_matrix
+
+# access the entry of my_matrix located in row 1, column 2
+my_matrix[1,2]
+```
+\
+
+**Note**: recall that for vectors, we can access multiple elements by passing a "vector of indices". The same logic is true for matrices. Because a matrix is built out of a single long vector (just reorganized with a sub-index), it is still possible to reference each entry by their original positions in the original long vector
+
+```{r}
+# create matrix out of the long vector c(1,2,3,4,5,6)
+my_matrix <- matrix(c(1,2,3,4,5,6), nrow = 3, ncol = 2)
+
+# access the 1st, 3rd, and 4th elements in the original long vector
+my_matrix[c(1,3,4)]
+```
+
+\
+
+Abstractly, a matrix is just a "vector of vectors" so we should be able to access individual rows and columns as these are just vectors (rows/columns) sitting inside of a bigger vector (the matrix). The syntax for accessing entire rows/columns is to leave one index blank:
+
+```{r}
+# access the 1st row of my_matrix
+my_matrix[1,]
+
+# access the 3rd row of my_matrix
+my_matrix[3,]
+
+# access the 2nd column of my_matrix
+my_matrix[,2]
+```
+\
+
+The "vector of indices" syntax also holds when selecting entire rows/columns:
+
+```{r}
+big_matrix = matrix(1:63, nrow = 7, ncol = 9)
+
+big_matrix
+```
+```{r}
+# access rows 2, 4, and 6 from big_matrix
+big_matrix[c(2,4,6),]
+
+# access columns 1, 3, 5, 7, 9 from big_matrix
+big_matrix[,c(1,3,5,7,9)]
+```
+\
+
+Recall that we can also *slice* lists and vectors by passing a range for the index. The same logic and syntax holds for matrices, allowing us to *slice* out minor matrices.
+
+```{r}
+# get the submatrix of rows 1-4, columns 1-3 from big_matrix
+big_matrix[1:4, 1:3]
+
+# get the bottom lower 2x2 square of big_matrix
+big_matrix[6:7, 8:9]
+```
+\
+
+Slicing can also be done in reverse order. This will have the effect of taking a "mirror image" along the direction of the slice:
+
+```{r}
+# get rows 1, 2, and 3 in that order
+big_matrix[1:3,]
+
+# get rows 3, 2, and 1 in that order
+big_matrix[3:1,]
+
+```
+\
+
+And just like with vectors, we can overwrite entries by accessing them:
+
+```{r}
+A <- matrix(1:12, nrow=3, ncol=4)
+
+A
+```
+```{r}
+# replace entry (1,1) with -2
+A[1,1] <- -2
+
+A
+```
+```{r}
+# replace row 1 with c(-1, -4, -7, -10)
+A[1,] <- c(-1, -4, -7, -10)
+
+A
+```
+```{r}
+# replace column 2 with c(-4, -5, -6)
+A[,2] <- c(-2,-4,-6)
+
+A
+```
+```{r}
+low_right_sq <- matrix(c(80,90, 110, 120), nrow=2, ncol=2)
+
+# replace the lower right 2x2 square with low_right_sq
+A[2:3, 3:4] <- low_right_sq
+
+A
+```
+\
+
+#### 3.3.4 Adding and Removing Rows/Columns
+
+We can add rows and columns to a matrix by using the `rbind()` and `cbind()` functions (`rbind()` for **row ** bind and `cbind()` for **column** bind).
+
+```{r}
+A <- matrix(1:12, nrow = 3, ncol = 4)
+
+A
+```
+\
+
+```{r}
+# add c(13, 14, 15) as 5th column of matrix
+A_new_col <- cbind(A, c(12,14,15))
+
+A_new_col
+```
+```{r}
+# add c(-3, -6, -9, -12) as 4th row
+A_new_row <- rbind(A, c(-3, -6, -9, -12))
+
+A_new_row
+```
+\
+
+But `rbind()` and `cbind()` are not just limited to single rows/columns, we can in fact concatenate *entire matrices*!
+
+```{r}
+A
+```
+```{r}
+B <- matrix(13:21, nrow = 3, ncol = 3)
+C <- matrix(-1:-20, nrow=5, ncol=4)
+
+B
+C
+```
+\
+
+```{r}
+# concatneate matrix A and B along the column dimension
+AB <- cbind(A,B)
+
+AB
+```
+```{r}
+# concatenate matrix A and C along the row dimension
+AC <- rbind(A,C)
+AC
+```
+\
+
+Recall for vectors that we can remove elements by using *negative* indices. The same logic is true for matrices.
+
+```{r}
+A
+```
+```{r}
+# return the original long vector, but without the 2nd element
+A[-2]
+
+# remove the 1st row
+A[-1,]
+
+# remove the 4th column
+A[,-4]
+
+# remove the 1st row and the 4th column together
+A[-1,-4]
+
+# remove 1st and 2nd row
+A[-c(1,2),]
+
+# remove 2nd and 4th column
+A[,-c(2,4)]
+
+# remove 2nd to 4th column, returns a single vector since 1d-matrix
+A[,-(2:4)]
+```
+\
+
+#### 3.3.5 Matrix Operations
+
+Matrices come equipped with a suite of arithmetic and algebraic operations. This include:
+
+- Addition / Subtraction
+- Scalar Mutliplication
+- Hadamard Product
+- Matrix Multiplication
+- Inverse
+- Transpose
+- Determinant
+- Kronecker Product
+
+\
+
+##### Addition
+
+Matrix addition works the same way as vector addition. Entries with the same indices $(i,j)$ are summed together like so:
+
+```{r}
+A <- matrix(1:6, nrow=2, ncol=3)
+B <- matrix(7:12, nrow=2, ncol=3)
+
+A
+B
+```
+```{r}
+# add matrices A and B
+A + B
+
+# subtract A from B
+B - A
+```
+\
+
+Notice that this addition procedure only makes sense for two matrices of the same dimensions. That is, matrices with differing dimensions cannot be added! 
+
+\
+
+Recall that the zero matrix, denoted $0$, is considered a special matrix. The reason $0$ is special is because $0$ is the **additive identity**. That is, $A+0 = A$ for any matrix $A$.
+
+```{r}
+zero <- matrix(0, nrow=2, ncol=3)
+
+zero
+```
+```{r}
+A+0
+B+0
+```
+\
+
+##### Scalar Multiplication
+
+Matrices can be scaled via multiplication with some factor.
+
+```{r}
+# double the elements of the matrix A
+2*A
+
+# take 1/2 of the elements of the matrix A
+A/2
+
+# take the negative of A
+-A
+```
+\
+
+##### Hadamard Product
+
+The **Hadamard product** between two matrices of the same dimension is just elementwise multiplication:
+
+```{r}
+A
+B
+
+# Hadamard Product, i.e. elementwise multiplication
+A*B
+```
+\
+
+The all-ones matrix, denoted $\mathbb{1}$, is special because $\mathbb{1}$ is the multiplicative identity of this operation.
+
+```{r}
+ones = matrix(1, nrow=2, ncol=3)
+
+A*ones
+B*ones
+```
+\
+
+##### Matrix Multiplication
+
+The Hadamard product is the most intuitive way to multiply two matrices, but rather unfortunately, Hadarmard products are not nearly as useful of a "product" as another kind of matrix multiplication.
+
+Given an $n\times k$ matrix $A$ and a $k\times m$ matrix $B$, the **matrix product** $AB$ is defined by taking the $(i,j)$-th entry to be the dot product of row $i$ of $A$ by column $j$ of $B$. The written definition is rather hard to parse, so it perhaps is better illustrated by an example:
+
+```{r}
+A <- matrix(c(1,1,2,3,5,1), nrow=2, ncol=3)
+
+A
+```
+```{r}
+B <- matrix(c(-1,2,3,-2,1,4), nrow=3, ncol=2)
+
+B
+```
+```{r}
+# row 1 of A
+A[1,]
+
+# row 2 of A
+A[2,]
+
+# column 1 of B
+B[,1]
+
+# column 2 of B
+B[,2]
+```
+\
+
+Matrix product $AB$ is given by taken `A[i,]` dot product `b[,j]` and sticking the result into the $(i,j)$-th entry. To compute the dot product of two vectors, we use the infix operator `%*%`
+
+```{r}
+# dot product of A[1,] and B[,1]; the (1,1) entry of the matrix product AB
+entry_11 <- A[1,] %*% B[,1]
+
+# repeat for all combinations of A[i,] and B[,j]
+entry_12 <- A[1,] %*% B[,2]
+entry_21 <- A[2,] %*% B[,1]
+entry_22 <- A[2,] %*% B[,2]
+
+# consolidate into matrix product AB
+AB <- matrix(c(entry_11, entry_12, entry_21,entry_22), nrow=2, ncol=2, byrow=TRUE)
+
+AB
+```
+\
+
+Thankfully, this matrix product can be computed by calling the operator `%*%` directly on the matrices from the beginning:
+
+```{r}
+# compute matrix product AB
+A %*% B
+```
+\
+
+**Important 1:** Matrix multiplication is done by taking the rows of $A$ and dot producting them with the columns of $B$. But dot products are only defined for vectors of the same length. This means that matrix multiplication is only possible if the `ncol` of $A$ is the same as the `nrow` of $B$.
+
+**Important 2:** Unlike regular multiplication or the Hadamard product, matrix multiplication is *not* commutative. This means the order in which we do the multiplication will change the final answer!
+
+```{r}
+A <- matrix(c(1,-1, 3,5), nrow=2, ncol=2)
+B <- matrix(c(2,3,-6,4), nrow=2, ncol=2)
+
+# matrix product AB
+A %*% B
+
+# matrix product of BA
+B %*% A
+```
+\
+
+Notice that $AB$ and $BA$ are not he same matrix! Therefore, we must always be careful of the order when multiplying matrices.
+
+\
+
+Recall the **identity matrix** $I$ is the matrix with 1's along the diagonal and 0's everywhere else. The identity matrix $I$ is special because $I$ is the multiplicative identity under matrix multiplication. That is, for any matrix $A$ (of compatible dimension), we always have $AI = A$ and $IA = A$.
+
+```{r}
+A <- matrix(c(1,2,3,4,5,6), nrow=2, ncol=3)
+
+A
+
+B <- matrix(c(1,2,3,4,5,6), nrow=3, ncol=2)
+
+B
+
+I <- diag(3)
+
+I
+
+```
+```{r}
+# AI = A
+A %*% I
+
+# IB = B
+I %*% B
+```
+\
+
+
+##### Aside: The Magic of Matrix Multiplication
+
+As mentioned before, the Hadamard product is the most intuitive way to multiply matrices, but it is matrix multiplication that is most prolific and most useful. This naturally begs the question: "Why? Why is matrix multiplication so prolific and useful even though it is so unintuitive and convoluted?"
+
+The answer lies at the heart of linear algebra. Consider a matrix $A$ and "column" vector $v$ (i.e. a $n\times 1$ matrix):
+
+```{r}
+A <- matrix(c(1, 2, 3, 4, 5, 6), nrow=2, ncol=3)
+
+A
+
+v <- matrix(c(2,5, -1), nrow=3, ncol=1)
+
+v
+```
+\
+
+What happens if we take the matrix product $Av$?
+
+```{r}
+A %*% v
+```
+\
+
+Notice that the result is another column vector. In this way, we can think of the matrix $A$ as a function, which maps the space of $3\times 1$ vectors to the space of $2\times 1$ vectors:
+
+$$A:\mathbb{R}^3\to \mathbb{R}^2$$
+
+
+This allows us do math in in higher dimensions because we can now effectively move across real-space of varying dimensions.
+
+Matrix multiplication satisfies 2 very important properties:
+
+$$A(v+u) = Av+Au$$
+
+$$A(\lambda v) = \lambda Av$$
+
+Functions which satisfy $f(v+u)=f(v)+f(u)$ and $f(\lambda v)=\lambda f(v)$ are called **linear transformations**. The point is that matrix multiplication by $A$ defines a linear transformation from $\mathbb{R}^n\to \mathbb{R}^m$. This is why matrix multiplication is special: the operation of matrix-vector multiplication is the same as performing a linear transformation on vectors. More importantly, the matrix product of two matrices $AB$ is the same as the composition of two linear functions. In this way, matrix multiplication is really the *algebra of transformations*.
+
+But the real magic happens when we consider the converse idea. Matrices define linear transformations, but it turns out that *all linear transformations come from matrices*. To understand why this must be true, consider the following example
+
+```{r}
+# consider the standard basis vectors, i.e. the x-, y- and z-axes
+e_1 <- matrix(c(1,0,0), nrow=3, ncol=1)
+e_2 <- matrix(c(0,1,0), nrow=3, ncol=1)
+e_3 <- matrix(c(0,0,1), nrow=3, ncol=1)
+
+# Multiply each coordinate axis with A
+A
+A %*% e_1
+A %*% e_2
+A %*% e_3
+```
+
+
+Notice that the mapping $A:\mathbb{R}^3\to \mathbb{R}^2$ takes each of the x-, y- and z-axis vectors precisely to the 1st, 2nd and 3rd **columns of A**.
+
+In particular, given any linear transformation $T:\mathbb{R}^n\to\mathbb{R}^m$, the matrix given by 
+
+$$A = \begin{bmatrix} T(e_1) & T(e_2) & T(e_3) \end{bmatrix}$$
+Will satisify $Av = T(v)$ for all vectors $v$. Here, $e_i$ denotes the $i$-th standard basis vector (i.e. the $i$-th coordinate axis). 
+
+**Bottom-line**: Matrix multiplication allows us to completely model the algebra of linear transformations.
+
+\
+
+##### The Determinant
+
+Given a $2\times 2$ matrix $A$
+
+$$A = \begin{pmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{pmatrix} $$
+the **determinant** of $A$ is the numerical value given by:
+
+$$ det(A) = a_{11}a_{22}-a_{12}a_{21}$$
+
+For a $3\times 3$ matrix $A$, the determinant of $A$ is the numerical value given by
+
+$$det(A) = a_{11}A_{11} - a_{12}A_{12} + a_{12}A_{13}$$
+
+where $A_{ij}$ is the submatrix of $A$, with row $i$ and column $j$ removed. For example, we can compute the deterimant of a $3\times 3$ matrix in code:
+
+```{r}
+A <- matrix(c(1,2,3,1,-1,5,6,7,-4), nrow=3, ncol=3)
+
+A
+
+```
+```{r}
+# the submatrices we need are
+A[-1,-1]
+A[-1,-2]
+A[-1,-3]
+```
+```{r}
+# write a function that computes 2x2 determinant
+compute_det <- function(minor){
+  return(minor[1,1]*minor[2,2]-minor[1,2]*minor[2,1])
+}
+
+# test function
+compute_det(A[-1,-1])
+```
+```{r}
+# loop through each minor and compute  3x3 determinant
+my_determinant <- 0
+
+for (i in 1:3) {
+  my_determinant <- my_determinant + ((-1)^(i+1))*A[1,i]*compute_det(A[-1,-i])
+}
+
+my_determinant
+```
+\
+
+In general, for an $n \times n$ matrix $A$, the **determinant** of $A$ is defined recursively by the formula:
+
+$$det(A) = \sum_{i=1}^n (-1)^{i+1}a_{1i}A_{1i} = a_{11}A_{11}+ \ldots+ (-1)^{n+1}a_{1n}A_{1n}$$
+Likely, R comes with a built-in `det()` function to compute determinants of square matrices.
+
+```{r}
+A <- matrix(c(1,2,3,1,-1,5,6,7,-4), nrow=3, ncol=3)
+
+A
+
+# compute determinant of A
+det(A)
+```
+\
+
+**Aside:** In the previous aside, we mentioned that matrices are actually linear transformations in disguise. The reason determinants are important is because determinants measure the "distortion in volume" the transformation produces. In the $2\times 2$ case, the determinant $det(A)$ is quite literally the area of the image of the unit square under the transformation of $A$.
+
+\
+
+##### Inverses
+
+Let $A$ be a square matrix. The **inverse** of $A$ is square matrix $A^{-1}$ such that 
+
+$$AA^{-1} = I = A^{-1}A$$
+
+In other words, $A^{-1}$ "cancels" with $A$ and returns the identity. Not all square matrices are invertible and the process of determining which matrices are (and are not) invertible is one of the major topics in linear algebra. Thankfully in R, we have a pre-built function that computes an inverse matrix (if it exists).
+
+```{r}
+A <- matrix(c(1,2,3,1,4,5,-1,1,7), nrow=3, ncol=3)
+
+A
+
+# compute inverse of matrix A
+solve(A)
+
+# verify inverse property
+A %*% solve(A)
+
+solve(A) %*% A
+```
+\
+
+Notice that we don't recover the identity matrix $I$ exactly because of rounding errors, but we do get pretty close to $I$ up to 16 decimal places (which is pretty close!)
+
+As mentioned before, not all matrices are invertible.
+
+```{r error = TRUE}
+# construct a non-invertible matrix A
+A <- matrix(1:9, nrow=3, ncol=3)
+
+A
+
+# attemtp to invert A anyways
+solve(A)
+```
+
+\
+
+Notice that the command `solve(A)` throws an error when we try to execute it. This is because the matrix $A$ we defined is **singular** which is a synonym for non-invertible.
+
+Anyways, inverses allow us to solve matrix equations by canceling a matrix term from both sides of an equation. For example, consider the following equation
+
+$$Av = b$$
+
+where matrix $A$ and vector $b$ are known quantities. Our job is to solve for a vector $v$ which satisfies the matrix equation. If $A$ happens to be an invertible matrix, then the solution is obtained very painlessly:
+
+$$\begin{align*}
+Av &= b\\
+A^{-1}Av &= A^{-1}b \\
+Iv &= A^{-1}b \\
+v & = A^{-1}b
+\end{align*}$$
+
+Since both $A$ and $b$ are known, $A^{-1}b$ can be computed and we have found a solution for $v$. This process of solving a matrix equation with the inverse $A^{-1}$ is the reason the `solve()` function has the name it does.
+
+**Fact:** We mentioned that not all matrices have inverses and determining which matrices are invertible is a central topic of linear algebra. One method for detecting invertibility is to use the determinant. Specifically: a square matrix $A$ is invertible if and only if $det(A)\neq 0$. This gives us a very clean and effective way of deciding wheter a matrix $A$ is invertible or singular. For example:
+
+```{r}
+# invertible matrix; non-zero determinant
+A <- matrix(c(1,2,3,-1,1,4,5,6,7), nrow=3, ncol=3)
+
+det(A)
+
+# singular matrix; zero determinant
+B <- matrix(1:9, nrow=3, ncol=3)
+
+det(B)
+```
+
+\
+
+##### Transpose
+
+Given a matrix $A$, the **transpose** of $A$ is the matrix $A^T$ whose $(i,j)$-th entry is precisely the $(j,i)$-th entry of A. This is illustrated in the following example:
+
+```{r}
+A <- matrix(1:6, nrow=2, ncol=3)
+
+A
+
+# take the transpose of A
+t(A)
+```
+\
+
+Notice that $(A^T)^T=A$, i.e. flipping a matrix $A$ twice just returns the original matrix.
+
+**Fact:** for any matrix $A$, the matrix product $AA^T$ is a square matrix. More importantly, we have $AA^T$ is **symmetric** and **positive semi-definite**. In particular, this implies that $AA^T$ will always have real non-negative eigenvalues (and consequently also have real non-negative singular values as singular values are square-roots of the eigenvalues).
+
+```{r}
+# matrix product of A and t(A)
+A %*% t(A)
+
+# matrix product of t(A) and A
+t(A) %*% A
+```
+\
+
+##### Kronecker Product
+
+One final operation is the **Kronecker product**. The Kronecker product between $A$ and $B$ takes the matrix $B$ and multiplies it against each individual entry of $A$.
+
+```{r}
+A <- matrix(c(1,2,3,4,5,6), nrow=2, ncol=3, byrow=TRUE)
+
+A
+```
+```{r}
+B <- matrix(c(1,0,1,1), nrow=2, ncol=2)
+
+B
+
+```
+```{r}
+# compute the Kronecker product of A by B
+A %x% B
+```
+
+\
+
+\
+
+---
